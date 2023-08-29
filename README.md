@@ -1,4 +1,10 @@
 # Fuzzer
-Simple C++ Fuzzer using cURL and Windows forms.
+Simple C++ URL Fuzzer using cURL and Windows forms.
 
-TODO: Still need to add Threads support.
+
+
+
+TODO:
+- Add threads support.
+- Add filter by response.
+- Remove unnecessary comments and code.

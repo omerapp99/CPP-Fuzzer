@@ -32,11 +32,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     if (hMainWindow == NULL)
         return 0;
 
-    hUsername = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "test",
+    hUsername = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "Admin",
         WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
         130, 20, 200, 25, hMainWindow, NULL, hInstance, NULL);
 
-    hPassword = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "test",
+    hPassword = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "Admin",
         WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL | ES_PASSWORD,
         130, 60, 200, 25, hMainWindow, NULL, hInstance, NULL);
 
@@ -95,7 +95,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
                 hSuccessWindow = CreateWindowEx(0, "SuccessWindowClass", "Url Fuzzing",
                     WS_OVERLAPPEDWINDOW & ~(WS_THICKFRAME | WS_MAXIMIZEBOX), CW_USEDEFAULT, CW_USEDEFAULT,
-                    400, 400, NULL, NULL, GetModuleHandle(NULL), NULL);
+                    420, 400, NULL, NULL, GetModuleHandle(NULL), NULL);
                 if (hSuccessWindow == NULL)
                     return 0;
 
@@ -149,7 +149,7 @@ LRESULT CALLBACK SuccessWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         hUrl = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "https://www.google.com/",
             WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
             80, 20, 240, 25, hwnd, NULL, NULL, NULL);
-        hPort = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "80",
+        hPort = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "443",
             WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL,
             80, 60, 240, 25, hwnd, NULL, NULL, NULL);
         hWordlist = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "",
@@ -171,7 +171,7 @@ LRESULT CALLBACK SuccessWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         // Create the ListView control with columns
         hResults = CreateWindow(WC_LISTVIEW, "",
             WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT | LVS_SINGLESEL,
-            5, 165, 382, 200, hwnd, NULL, NULL, NULL);
+            5, 165, 402, 200, hwnd, NULL, NULL, NULL);
 
         // Define and insert the first column
         LVCOLUMN urlCol;
@@ -185,13 +185,12 @@ LRESULT CALLBACK SuccessWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         LVCOLUMN responseCol;
         responseCol.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
         responseCol.fmt = LVCFMT_LEFT;
-        responseCol.cx = 63; // Adjusted width to ensure no empty column
+        responseCol.cx = 100; // Adjusted width to ensure no empty column
         responseCol.pszText = LPSTR("Response");
         ListView_InsertColumn(hResults, 1, &responseCol);
 
         // Set additional ListView styles
         ListView_SetExtendedListViewStyle(hResults, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-        //PopulateListView(hResults);
 
 
         break;

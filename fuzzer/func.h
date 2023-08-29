@@ -7,5 +7,5 @@ int PwdCheck(char*, char*);
 int CenterWindow(HWND);
 string GetWordlist(HWND, HWND);
 void PopulateListView(HWND, string, string);
-string UrlBuild(HWND, HWND, string, HWND);
+void UrlBuild(HWND, HWND, string, HWND);
 

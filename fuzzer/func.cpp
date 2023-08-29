@@ -6,7 +6,7 @@
 #include <vector>
 #include <cstdlib>
 #include <curl/curl.h>
-//#include <cpr/cpr.h>
+#include <thread>
 #include "func.h"
 
 using namespace std;
@@ -16,7 +16,7 @@ string fUrl;
 
 
 int PwdCheck(char* username, char* password) {
-    if (strcmp(username, "test") == 0 && strcmp(password, "test") == 0)
+    if (strcmp(username, "Admin") == 0 && strcmp(password, "Admin") == 0)
     {
         return(1);
     }
@@ -59,8 +59,27 @@ string GetWordlist(HWND hwnd, HWND hWordlist) {
     return string(szFileName);
 }
 
+void fuzzer(HWND hListView){
+    CURL* curl = curl_easy_init();
+    CURLcode res;
+    curl_easy_setopt(curl, CURLOPT_URL, fUrl.c_str());
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1L);
+    res = curl_easy_perform(curl);
+    long response_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    string StrResponse = std::to_string(response_code);
+    //MessageBoxA(NULL, StrResponse.c_str(), "testx", MB_OK);
+    curl_easy_cleanup(curl);
+    if (StrResponse != "0") {
+        PopulateListView(hListView, StrResponse, fUrl.c_str());
+    }
+    else {
+        MessageBoxA(NULL, "Invalid Port / URL", "Error", MB_OK | MB_ICONERROR);
+    }
+}
 
-string UrlBuild(HWND hUrl, HWND hPort, string path, HWND hListView) {
+void UrlBuild(HWND hUrl, HWND hPort, string path, HWND hListView) {
     // Get the size of the URL text
     int cTxtLen = GetWindowTextLength(hUrl);
 
@@ -88,7 +107,6 @@ string UrlBuild(HWND hUrl, HWND hPort, string path, HWND hListView) {
     {
         while (getline(myfile, line))
         {
-            //cout << line << '\n';
             const char* cstr = line.c_str();
             //Here should the fuzz start, the built Url from UrlBuild function with the fuzz word.
             //Checking if there is "/" before the fuzz word.
@@ -99,7 +117,6 @@ string UrlBuild(HWND hUrl, HWND hPort, string path, HWND hListView) {
             else {
                 fUrl = sUrl + ":" + sPort + "/" + cstr;
             }
-
             CURL* curl = curl_easy_init();
             CURLcode res;
             curl_easy_setopt(curl, CURLOPT_URL, fUrl.c_str());
@@ -111,8 +128,8 @@ string UrlBuild(HWND hUrl, HWND hPort, string path, HWND hListView) {
             string StrResponse = std::to_string(response_code);
             //MessageBoxA(NULL, StrResponse.c_str(), "testx", MB_OK);
             curl_easy_cleanup(curl);
-            if (StrResponse != "0"){
-            PopulateListView(hListView, StrResponse, fUrl.c_str());
+            if (StrResponse != "0") {
+                PopulateListView(hListView, StrResponse, fUrl.c_str());
             }
             else {
                 MessageBoxA(NULL, "Invalid Port / URL", "Error", MB_OK | MB_ICONERROR);
@@ -122,8 +139,8 @@ string UrlBuild(HWND hUrl, HWND hPort, string path, HWND hListView) {
         myfile.close();
     }
     else MessageBox(NULL, "Unable to open the file", "Error", MB_OK | MB_ICONERROR);
-    return "test";
 }
+
 
 struct ListViewItem
 {
@@ -134,10 +151,12 @@ vector<ListViewItem> itemsVector;
 
 void PopulateListView(HWND hListView, string httpResp, string fUrl)
 {
+    
     ListViewItem newItem;
     newItem.url = fUrl.c_str(); // Convert string to const char*
     newItem.response = httpResp.c_str(); // Convert int to const char*
     itemsVector.push_back(newItem);
+
 
     int existingItemCount = ListView_GetItemCount(hListView);
 
@@ -151,25 +170,3 @@ void PopulateListView(HWND hListView, string httpResp, string fUrl)
         ListView_SetItemText(hListView, i, 1, const_cast<LPSTR>(itemsVector[i].response));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
